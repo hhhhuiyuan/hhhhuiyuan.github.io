@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="ZeroShape: Regression-based Zero-shot Shape Reconstruction.">
+  <meta name="keywords" content="ZeroShape, 3D Reconstruction">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZeroShape</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148033168-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-148033168-1');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./zeroshape/css/bulma.min.css">
+  <link rel="stylesheet" href="./zeroshape/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./zeroshape/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./zeroshape/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./zeroshape/css/index.css">
+  <link rel="icon" href="./zeroshape/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./zeroshape/js/fontawesome.all.min.js"></script>
+  <script src="./zeroshape/js/bulma-carousel.min.js"></script>
+  <script src="./zeroshape/js/bulma-slider.min.js"></script>
+  <script src="./zeroshape/js/index.js"></script>
+
+
+  <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.156.1/build/three.module.js",
+        "three/controls/OrbitControls": "https://unpkg.com/three@0.156.1/examples/jsm/controls/OrbitControls.js",
+        "three/libs/stats": "https://unpkg.com/three@0.156.1/examples/jsm/libs/stats.module.js"
+      }
+    }
+  </script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
+  <script>
+    window.onload = function() {
+      document.querySelectorAll('.load-model').forEach(button => {
+        button.addEventListener('click', function() {
+          const modelSrc = this.getAttribute('data-model-src');
+          const modelViewer = this.parentElement.querySelector('model-viewer');
+          modelViewer.setAttribute('src', modelSrc);
+          this.style.display = 'none'; // hides the button
+        });
+      });
+    }
+  </script>
+
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-3 publication-title">ZeroShape: Regression-based Zero-shot Shape Reconstruction</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://zixuanh.com">Zixuan Huang*</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+            <a href="https://sstojanov.github.io">Stefan Stojanov*</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+                <a href="https://anhthai1997.wordpress.com">Anh Thai</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://varunjampani.github.io">Varun Jampani</a><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://rehg.org">James M. Rehg</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UIUC,</span>
+            <span class="author-block"><sup>2</sup>Georgia Tech,</span>
+            <span class="author-block"><sup>3</sup>Stability AI</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><b>CVPR 2024</b></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="./zeroshape/paper.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=BxTGVjXoXu8"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/zxhuang1698/ZeroShape"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Demo Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/spaces/zxhuang1698/ZeroShape"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Demo</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./zeroshape/videos/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <b>SOTA 3D shape reconstructor</b> with <b>high computational efficiency</b> and <b>low training data budget</b>.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          We study the problem of single-image zero-shot 3D shape reconstruction. Recent works learn zero-shot shape reconstruction through generative modeling of 3D assets, but these models are computationally expensive at train and inference time. In contrast, the traditional approach to this problem is regression-based, where deterministic models are trained to directly regress the object shape. Such regression methods possess much higher computational efficiency than generative methods. This raises a natural question: is generative modeling necessary for high performance, or conversely, are regression-based approaches still competitive? To answer this, we design a strong regression-based model, called ZeroShape, based on the converging findings in this field and a novel insight. We also curate a large real-world evaluation benchmark, with objects from three different real-world 3D datasets. This evaluation benchmark is more diverse and an order of magnitude larger than what prior works use to quantitatively evaluate their models, aiming at reducing the evaluation variance in our field. We show that ZeroShape not only achieves superior performance over state-of-the-art methods, but also demonstrates significantly higher computational and data efficiency. 
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- <div class="columns is-centered has-text-centered"> -->
+
+      <!-- Visual Effects. -->
+      <!-- <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Visual Effects</h2>
+          <p>
+            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
+            would be impossible without nerfies since it would require going through a wall.
+          </p>
+          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
+            <source src="./zeroshape/videos/dollyzoom-stacked.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div> -->
+
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/BxTGVjXoXu8?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+
+    <!-- arch. -->
+    <div class="container is-max-desktop">
+      <div class="hero-body has-text-centered">
+          <h2 class="title is-3">Architecture</h2>
+            <video id="arch" autoplay muted loop playsinline controls height="100%">
+              <source src="./zeroshape/videos/architecture.mp4"
+                      type="video/mp4">
+            </video>
+      </div>
+    </div>
+    <!--/ arch. -->
+
+    <!-- Tuple examples (image, video, mesh). -->
+    <br><h2 class="title is-3 is-centered has-text-centered">Results</h2>
+    <div class="tuple-container">
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/13.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/13.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/13.glb">3D</button>
+        </div>
+      </div>
+      
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/2.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/2.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/2.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/3.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/3.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/3.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/4.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/4.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/4.glb">3D</button>
+        </div>
+      </div>
+      
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/5.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/5.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/5.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/6.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/6.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/6.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/7.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/7.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/7.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/8.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/8.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/8.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/9.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/9.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/9.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/10.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/10.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/10.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/11.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/11.mp4"autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/11.glb">3D</button>
+        </div>
+      </div>
+
+      <div class="tuple">
+        <div class="tuple-item">
+            <img src="./zeroshape/examples/12.png" alt="Image 1">
+            <p class="tuple-text">Image</p>
+        </div>
+        <div class="tuple-item">
+            <video src="./zeroshape/examples/12.mp4" autoplay loop muted></video>
+            <p class="tuple-text">Video</p>
+        </div>
+        <div class="tuple-item">
+            <model-viewer id="model1"
+                          shadow-intensity="1"
+                          environment-image="./zeroshape/examples/snow_field_puresky_1k.hdr" 
+                          skybox-image="./zeroshape/examples/snow_field_puresky_1k.hdr"
+                          orientation="180deg 270deg 180deg"
+                          max-field-of-view="50deg"
+                          style="background: linear-gradient(#ccd3e0, #e4e0d1); overflow-x: hidden;"
+                          camera-controls touch-action="pan-y">
+            </model-viewer>
+            <p class="tuple-text">Model</p>
+            <button class="load-model" data-model-src="./zeroshape/examples/12.glb">3D</button>
+        </div>
+      </div>
+        
+
+    </div>
+
+    <!-- <div class="column pb-6 is-one-third">
+        <p>Toy Giraffe</p>
+        <model-viewer src="./zeroshape/examples/1.glb" 
+                      shadow-intensity="1"
+                      orientation="180deg 270deg 180deg"
+                      style="background: linear-gradient(#ffffff, #ada996); overflow-x: hidden;"
+                      camera-controls touch-action="pan-y">
+        </model-viewer>
+    </div> -->
+    <!-- Tuple examples (image, video, mesh). -->
+    
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{huang2024zeroshape,
+  author    = {Huang, Zixuan and Stojanov, Stefan and Thai, Anh and Jampani, Varun and Rehg, James M},
+  title     = {ZeroShape: Regression-based Zero-shot Shape Reconstruction},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {10061--10071},
+  year      = {2024},
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io"> Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
