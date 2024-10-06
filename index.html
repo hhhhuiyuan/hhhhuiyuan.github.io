@@ -19,6 +19,14 @@
         <link rel="stylesheet" type="text/css" href="main.css">
         <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Lato">
+
+        <script>
+            function unscrambleEmail() {
+                const scrambledEmail = "h*u*i*y*u*a*n*@*p*r*i*n*c*e*t*o*n*.*e*d*u";
+                const unscrambledEmail = scrambledEmail.replace(/\*/g, '');
+                document.getElementById('email').innerText = unscrambledEmail;
+            }
+        </script>
     
     </head>
     <body>
@@ -35,12 +43,13 @@
 
                         <div class="text-center-fluid">
                         <h3>Hui Yuan</h3>
-                        <p>huiyuan@princeton.edu</p>
+                        <p id="email">h*u*i*y*u*a*n*@*p*r*i*n*c*e*t*o*n*.*e*d*u</p>
+                        <button onclick="unscrambleEmail()">Show Email</button>
                         <p style="margin-bottom: 0;"> 
                             <a href="cv.pdf"><img src="img/icons/cv-file-interface-symbol-svgrepo-com.svg" height="25"></a> 
-                            <a href="https://twitter.com/zixuan_huang"><img src="img/icons/twitter-svgrepo-com.svg" height="25"></a> 
-                            <a href="https://github.com/zxhuang1698"><img src="img/icons/github-svgrepo-com.svg" height="25"></a> 
-                            <a href="https://scholar.google.com/citations?user=ADUOZWsAAAAJ&hl=en"><img src="img/icons/google-scholar-svgrepo-com.svg" height="25"></a> 
+                            <!-- <a href="https://twitter.com/zixuan_huang"><img src="img/icons/twitter-svgrepo-com.svg" height="25"></a> -->
+                            <!--<a href="https://github.com/zxhuang1698"><img src="img/icons/github-svgrepo-com.svg" height="25"></a> --> 
+                            <a href="https://scholar.google.com/citations?user=9gxhjYcAAAAJ&hl=en"><img src="img/icons/google-scholar-svgrepo-com.svg" height="25"></a> 
                         </p>
                         </div>
                     </div>
@@ -49,7 +58,7 @@
                 <div class="col-md-7 px-4 py-4">
 
                     <div class="text-center">
-                        <p align=justify> My name is Zixuan Huang (黄子煊, pronounced as Zi-Shwan Hwung), currently a fourth-year CS PhD student at University of Illinois Urbana-Champaign advised by <a href="https://rehg.org/">James Rehg</a>. I got my masters degree at University of Wisconsin-Madison, where I was fortunate to work with Professor <a href="https://www.biostat.wisc.edu/~yli/">Yin Li</a>. I received my B.E. in the Special Class for Gifted Young from University of Science and Technology of China (USTC) in 2018. My main research focus is scalable and generalizable 3D shape reconstruction.</p>
+                        <p align=justify> Welcome! My name is Hui Yuan (袁慧, pronounced as [&#x0265;&#x00E6;&#x006E; &#x0078;&#x0077;&#x0065;&#x026A;]), currently a final-year ECE PhD student at Princeton University. advised by <a href="https://rehg.org/">James Rehg</a>. I got my masters degree at University of Wisconsin-Madison, where I was fortunate to work with Professor <a href="https://www.biostat.wisc.edu/~yli/">Yin Li</a>. I received my B.E. in the Special Class for Gifted Young from University of Science and Technology of China (USTC) in 2018. My main research focus is scalable and generalizable 3D shape reconstruction.</p>
 
                     <p align=justify> In the past few years, I have also worked with <a href="https://chaoyuan.org/">Chao-Yuan Wu</a> and <a href="https://web.eecs.umich.edu/~justincj/">Justin Johnson</a> at FAIR Labs (Meta AI), <a href="https://varunjampani.github.io/">Varun Jampani</a> and <a href="http://people.csail.mit.edu/yzli/">Yuanzhen Li</a> at Google Research, as well as <a href="http://www.ee.cuhk.edu.hk/~hsli/">Hongsheng Li</a> and <a href="https://scholar.google.com/citations?user=afbbNmwAAAAJ&hl=en">Shuai Yi</a> at Sensetime Research.</p>
                     
